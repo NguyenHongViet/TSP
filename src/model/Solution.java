@@ -37,8 +37,8 @@ public class Solution {
 	public void calcCost() {
 		cost = 0;
 		for (int i=0; i<list.length-1; i++)
-			cost += graph.getCity(list[i]).distance(graph.getCity(list[i+1]));
-		cost += graph.getCity(list[list.length-1]).distance(graph.getCity(list[0]));
+			cost += City.distance(graph.getCity(list[i]), graph.getCity(list[i+1]));
+		cost += City.distance(graph.getCity(list[list.length-1]), graph.getCity(list[0]));
 	}
 	
 	public double getCost() {

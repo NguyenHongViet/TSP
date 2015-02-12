@@ -19,7 +19,7 @@ public class City {
 		return y;
 	}
 	
-	public double distance(City city) {
-		return Math.sqrt(Math.pow(x - city.x, 2) + Math.pow(y - city.y, 2));
+	public static double distance(City city1, City city2) {
+		return Math.sqrt(Math.pow(city1.x - city2.x, 2) + Math.pow(city1.y - city2.y, 2));
 	}
 }

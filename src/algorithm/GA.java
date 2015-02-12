@@ -3,6 +3,7 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.Random;
 
+import model.City;
 import model.Graph;
 import model.Solution;
 
@@ -49,14 +50,28 @@ public class GA {
 			
 			
 			for (int j=0; j<MAX_POPULATION; j++)
-				if (r.nextDouble() < MUTATE_PERCENTAGE)
-					population.add(mutate(population.get(j)));
+				if (r.nextDouble() < MUTATE_PERCENTAGE) {
+					Solution mutation = mutate(population.get(j));
+					if (mutation != null)
+						population.add(mutation);
+				}
 		}
 	}
 
 	public Solution mutate(Solution solution) {
 		Solution newSolution = new Solution(solution);
-		return newSolution;
+		for (int a = 0; a < solution.getList().length-3; a++) {
+			int b = a + 1;
+			for (int c = a + 2; c < solution.getList().length-1; c++) {
+				int d = c + 1;
+				if (City.distance(graph.getCity(a), graph.getCity(b)) + City.distance(graph.getCity(c), graph.getCity(d)) > 
+					City.distance(graph.getCity(a), graph.getCity(c)) + City.distance(graph.getCity(b), graph.getCity(d))) {
+					newSolution.swap(b, d, true);
+					return newSolution;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void crossover(ArrayList<Solution> pop, Solution parent1, Solution parent2) {

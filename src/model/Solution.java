@@ -66,18 +66,4 @@ public class Solution {
 				return i;
 		return -1;
 	}
-	
-	public int getNext(int city) {
-		int index = getCity(city);
-		if (index == -1) return -1;
-		if (index == list.length - 1) return 0;
-		return index + 1;
-	}
-	
-	public int getPrev(int city) {
-		int index = getCity(city);
-		if (index == -1) return -1;
-		if (index == 0) return list.length - 1;
-		return index - 1;
-	}
 }

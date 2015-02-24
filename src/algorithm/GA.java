@@ -10,7 +10,6 @@ import model.Solution;
 public class GA {
 	
 	private Graph graph;
-	private int cities;
 	private ArrayList<Solution> population;
 	
 	public static final int MAX_POPULATION = 100;
@@ -22,8 +21,7 @@ public class GA {
 	public GA(String filename) {
 		graph = new Graph(filename);
 		population = new ArrayList<>();
-		cities = graph.getList().size();
-		MUTATE_PERCENTAGE = 1f/cities;
+		MUTATE_PERCENTAGE = 1f/graph.getCities();
 		r = new Random();
 	}
 	
@@ -61,9 +59,9 @@ public class GA {
 
 	public Solution mutate(Solution solution) {
 		Solution newSolution = new Solution(solution);
-		for (int a = 0; a < cities-3; a++) {
+		for (int a = 0; a < graph.getCities()-3; a++) {
 			int b = a + 1;
-			for (int c = a + 2; c < cities-1; c++) {
+			for (int c = a + 2; c < graph.getCities()-1; c++) {
 				int d = c + 1;
 				if (City.distance(graph.getCity(a), graph.getCity(b)) + City.distance(graph.getCity(c), graph.getCity(d)) > 
 					City.distance(graph.getCity(a), graph.getCity(c)) + City.distance(graph.getCity(b), graph.getCity(d))) {
@@ -77,18 +75,18 @@ public class GA {
 
 	public Solution crossover(Solution parent1, Solution parent2) {
 		Solution g = new Solution(graph);
-		for (int i=0; i<cities; i++)
+		for (int i=0; i<graph.getCities(); i++)
 			g.getList()[i] = -1;
 		int index = 0;
 		boolean fa = true, fb = true;
-		int t = r.nextInt(cities);
+		int t = r.nextInt(graph.getCities());
 		int x = parent1.getCity(t);
 		int y = parent2.getCity(t);
 		g.getList()[index++] = t;
 		
 		do {
-			x = (x == 0) ? (cities - 1) : (x - 1);
-			y = (y == cities - 1) ? (0) : (y + 1);
+			x = (x == 0) ? (graph.getCities() - 1) : (x - 1);
+			y = (y == graph.getCities() - 1) ? (0) : (y + 1);
 			if (fa) {
 				int ax = parent1.getList()[x];
 				if (g.getCity(ax) == -1) {
@@ -107,13 +105,13 @@ public class GA {
 			}
 		} while (fa || fb);
 		
-		if (index < cities) {
+		if (index < graph.getCities()) {
 			ArrayList<Integer> remain = new ArrayList<>();
-			for (int i=0; i<cities; i++)
+			for (int i=0; i<graph.getCities(); i++)
 				if (g.getCity(i) == -1)
 					remain.add(i);
 			
-			while (index < cities) {
+			while (index < graph.getCities()) {
 				t = r.nextInt(remain.size());
 				g.getList()[index++] = remain.get(t);
 				remain.remove(t);

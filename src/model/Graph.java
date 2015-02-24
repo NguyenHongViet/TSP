@@ -50,6 +50,10 @@ public class Graph {
 		return list.indexOf(city);
 	}
 	
+	public int getCities() {
+		return list.size();
+	}
+	
 	public void print() {
 		for (int i=0; i<list.size(); i++)
 			System.out.println(i + " " + getCity(i).getX() + " " + getCity(i).getY());

@@ -12,8 +12,8 @@ public class VNS {
 	private Graph graph;
 	private Random r;
 	
-	public VNS(Graph graph) {
-		this.graph = graph;
+	public VNS(String filename) {
+		graph = new Graph(filename);
 		r = new Random();
 	}
 
@@ -102,5 +102,20 @@ public class VNS {
 		} while (t <= tmax);
 		
 		return x;
+	}
+	
+	public Graph getGraph() {
+		return graph;
+	}
+	
+	public static void main(String[] args) {
+		VNS solve = new VNS("eil51.tsp");
+		solve.getGraph().print();
+		
+		for (int i=0; i<20; i++) {
+			System.out.println("GVNS " + i +":");
+			Solution x = new Solution(solve.getGraph());
+			solve.GVNS(x, 2, 5, 20).print();
+		}
 	}
 }

@@ -45,8 +45,10 @@ public class GA {
 				parents.remove(choose);
 			}
 			
-			for (int j=0; j<PARENT_POP; j++)
-				population.add(crossover(parent1.get(j), parent2.get(j)));
+			for (int j=0; j<PARENT_POP; j++) {
+				Solution child = crossover(parent1.get(j), parent2.get(j));
+				if (checkNew(child)) population.add(child);
+			}
 			
 			Solution top = population.get(0);
 			Solution next = population.get(1);
@@ -60,15 +62,23 @@ public class GA {
 			
 			Solution topMutation = mutate(top);
 			Solution nextMutation = mutate(next);
-			if (topMutation != null) population.add(topMutation);
-			if (nextMutation != null) population.add(nextMutation);
+			if (checkNew(topMutation)) population.add(topMutation);
+			if (checkNew(nextMutation)) population.add(nextMutation);
 			
 			for (int j=0; j<MAX_POPULATION; j++)
 				if (r.nextDouble() < MUTATE_PERCENTAGE) {
 					Solution mutation = mutate(population.get(j));
-					if (mutation != null) population.add(mutation);
+					if (checkNew(mutation)) population.add(mutation);
 				}
 		}
+	}
+	
+	private boolean checkNew(Solution solution) {
+		if (solution == null) return false;
+		for (int i=0; i<population.size(); i++)
+			if (population.get(i).getCost() == solution.getCost())
+				return false;
+		return true;
 	}
 
 	public Solution mutate(Solution solution) {

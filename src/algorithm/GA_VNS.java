@@ -23,6 +23,7 @@ public class GA_VNS extends GA {
 			System.out.println("Solution "+(i+1)+":");
 			solve.getPopulation().get(i).print();
 		}
+		solve.populationInfo();
 	}
 
 }

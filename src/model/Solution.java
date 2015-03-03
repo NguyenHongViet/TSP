@@ -17,7 +17,7 @@ public class Solution {
 			list[i] = i;
 		Random r = new Random();
 		for (int i=0; i<list.length*2; i++)
-			swap(r.nextInt(list.length), r.nextInt(list.length), false);
+			swap(r.nextInt(list.length), r.nextInt(list.length));
 		calcCost();
 	}
 	
@@ -30,11 +30,10 @@ public class Solution {
 		setLevel(0);
 	}
 	
-	public void swap(int a, int b, boolean reCalc) {
+	public void swap(int a, int b) {
 		int t = list[a];
 		list[a] = list[b];
 		list[b] = t;
-		if (reCalc) calcCost();
 	}
 	
 	public void calcCost() {

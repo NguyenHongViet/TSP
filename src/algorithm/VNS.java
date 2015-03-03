@@ -23,16 +23,28 @@ public class VNS {
 			int b = a + 1;
 			for (int c = a + 2; c < graph.getCities()-1; c++) {
 				int d = c + 1;
-				if (City.distance(graph.getCity(a), graph.getCity(b)) + City.distance(graph.getCity(c), graph.getCity(d)) > 
-					City.distance(graph.getCity(a), graph.getCity(c)) + City.distance(graph.getCity(b), graph.getCity(d))) {
+				double ab = distance(solution.getList()[a], solution.getList()[b]);
+				double cd = distance(solution.getList()[c], solution.getList()[d]);
+				double ac = distance(solution.getList()[a], solution.getList()[c]);
+				double bd = distance(solution.getList()[b], solution.getList()[d]);
+				if (ab + cd > ac + bd) {
+					int start = b;
+					int end = c;
 					Solution newSolution = new Solution(solution);
-					newSolution.swap(b, c, true);
+					while (start < end) newSolution.swap(start++, end--);
+					newSolution.calcCost();
 					newSolution.setLevel(solution.getLevel() + 1);
 					neighborhood.add(newSolution);
 				}
 			}
 		}
 		return neighborhood;
+	}
+	
+	private double distance(int x1, int x2) {
+		City c1 = graph.getCity(x1);
+		City c2 = graph.getCity(x2);
+		return City.distance(c1, c2);
 	}
 	
 	public ArrayList<Solution> getNeighborhood_insert(Solution solution) {

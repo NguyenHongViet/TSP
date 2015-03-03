@@ -48,29 +48,55 @@ public class GA {
 			for (int j=0; j<PARENT_POP; j++)
 				population.add(crossover(parent1.get(j), parent2.get(j)));
 			
+			Solution top = population.get(0);
+			Solution next = population.get(1);
+			for (int j=1; j<MAX_POPULATION; j++) {
+				if (population.get(j).getCost() < top.getCost()) {
+					next = top;
+					top = population.get(j);
+				} else if (population.get(j).getCost() < next.getCost())
+					next = population.get(j);
+			}
+			
+			Solution topMutation = mutate(top);
+			Solution nextMutation = mutate(next);
+			if (topMutation != null) population.add(topMutation);
+			if (nextMutation != null) population.add(nextMutation);
+			
 			for (int j=0; j<MAX_POPULATION; j++)
 				if (r.nextDouble() < MUTATE_PERCENTAGE) {
 					Solution mutation = mutate(population.get(j));
-					if (mutation != null)
-						population.add(mutation);
+					if (mutation != null) population.add(mutation);
 				}
 		}
 	}
 
 	public Solution mutate(Solution solution) {
 		Solution newSolution = new Solution(solution);
-		for (int a = 0; a < graph.getCities()-3; a++) {
+		for (int a = 0; a < solution.getList().length-3; a++) {
 			int b = a + 1;
-			for (int c = a + 2; c < graph.getCities()-1; c++) {
+			for (int c = a + 2; c < solution.getList().length-1; c++) {
 				int d = c + 1;
-				if (City.distance(graph.getCity(a), graph.getCity(b)) + City.distance(graph.getCity(c), graph.getCity(d)) > 
-					City.distance(graph.getCity(a), graph.getCity(c)) + City.distance(graph.getCity(b), graph.getCity(d))) {
-					newSolution.swap(b, c, true);
+				double ab = distance(solution.getList()[a], solution.getList()[b]);
+				double cd = distance(solution.getList()[c], solution.getList()[d]);
+				double ac = distance(solution.getList()[a], solution.getList()[c]);
+				double bd = distance(solution.getList()[b], solution.getList()[d]);
+				if (ab + cd > ac + bd) {
+					int start = b;
+					int end = c;
+					while (start < end) newSolution.swap(start++, end--);
+					newSolution.calcCost();
 					return newSolution;
 				}
 			}
 		}
 		return null;
+	}
+	
+	private double distance(int x1, int x2) {
+		City c1 = graph.getCity(x1);
+		City c2 = graph.getCity(x2);
+		return City.distance(c1, c2);
 	}
 
 	public Solution crossover(Solution parent1, Solution parent2) {
@@ -156,6 +182,23 @@ public class GA {
 		return population;
 	}
 	
+	public void populationInfo() {
+		double max, min, sum;
+		max = sum = 0.0;
+		min = 99e100;
+		
+		for (int i=0; i<population.size(); i++) {
+			double cur = population.get(i).getCost();
+			if (cur > max) max = cur;
+			if (cur < min) min = cur;
+			sum += cur;
+		}
+		
+		System.out.println("Max price: " + max);
+		System.out.println("Min price: " + min);
+		System.out.println("Avg price: " + (sum/population.size()));
+	}
+	
 	public static void main(String[] args) {
 		GA solve = new GA("eil51.tsp");
 		solve.getGraph().print();
@@ -164,6 +207,7 @@ public class GA {
 			System.out.println("Solution "+(i+1)+":");
 			solve.getPopulation().get(i).print();
 		}
+		solve.populationInfo();
 		
 //		Test Crossover
 //		Solution p1 = new Solution(solve.getGraph());
@@ -180,6 +224,10 @@ public class GA {
 //		System.out.println("Origin:");
 //		origin.print();
 //		System.out.println("Mutated:");
-//		solve.mutate(origin).print();
+//		while (true) {
+//			origin = solve.mutate(origin);
+//			if (origin == null) break;
+//			System.out.println(origin.getCost());
+//		}
 	}
 }

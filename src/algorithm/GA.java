@@ -72,6 +72,17 @@ public class GA {
 	}
 
 	public Solution mutate(Solution solution) {
+		Solution mutation = tranform2opt(solution);
+		if (mutation == null) return null;
+		Solution last = null;
+		while (mutation != null) {
+			last = new Solution(mutation);
+			mutation = tranform2opt(mutation);
+		}
+		return last;
+	}
+	
+	private Solution tranform2opt(Solution solution) {
 		Solution newSolution = new Solution(solution);
 		for (int a = 0; a < solution.getList().length-3; a++) {
 			int b = a + 1;

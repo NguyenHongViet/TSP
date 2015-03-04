@@ -12,7 +12,7 @@ public class GA_VNS extends GA {
 	}
 	
 	public Solution mutate(Solution solution) {
-		return vns.GVNS(solution, 10, 10, 20);
+		return vns.GVNS(solution, 20);
 	}
 	
 	public static void main(String[] args) {

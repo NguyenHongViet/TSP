@@ -7,12 +7,10 @@ public class Solution {
 	private int[] list;
 	private Graph graph;
 	private double cost;
-	private int level;
 	
 	public Solution(Graph graph) {
 		this.graph = graph;
 		list = new int[graph.getList().size()];
-		setLevel(0);
 		for (int i=0; i<list.length; i++)
 			list[i] = i;
 		Random r = new Random();
@@ -27,7 +25,6 @@ public class Solution {
 		for (int i=0; i<list.length; i++)
 			list[i] = solution.list[i];
 		this.cost = solution.cost;
-		setLevel(0);
 	}
 	
 	public void swap(int a, int b) {
@@ -69,12 +66,4 @@ public class Solution {
 		return -1;
 	}
 
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-	
 }

@@ -11,6 +11,7 @@ public class VNS {
 	
 	private Graph graph;
 	private Random r;
+	private int kmax = 3;
 	
 	public VNS(String filename) {
 		graph = new Graph(filename);
@@ -33,7 +34,6 @@ public class VNS {
 					Solution newSolution = new Solution(solution);
 					while (start < end) newSolution.swap(start++, end--);
 					newSolution.calcCost();
-					newSolution.setLevel(solution.getLevel() + 1);
 					neighborhood.add(newSolution);
 				}
 			}
@@ -48,32 +48,54 @@ public class VNS {
 	}
 	
 	public ArrayList<Solution> getNeighborhood_insert(Solution solution) {
-		return null;
+		ArrayList<Solution> neighborhood = new ArrayList<>();
+		for (int i=0; i<graph.getCities()-2; i++)
+			for (int j=i+2; j<graph.getCities(); j++) {
+				Solution newSolution = new Solution(solution);
+				int temp = newSolution.getList()[j];
+				for (int k=j; k>i; k--)
+					newSolution.getList()[k] = newSolution.getList()[k-1];
+				newSolution.getList()[i+1] = temp;
+				newSolution.calcCost();
+				if (newSolution.getCost() < solution.getCost())
+					neighborhood.add(newSolution);
+			} 
+		return neighborhood;
 	}
 	
 	public ArrayList<Solution> getNeighborhood_swap(Solution solution) {
+		ArrayList<Solution> neighborhood = new ArrayList<>();
+		for (int i=0; i<graph.getCities()-1; i++)
+			for (int j=i+1; j<graph.getCities(); j++) {
+				Solution newSolution = new Solution(solution);
+				newSolution.swap(i, j);
+				newSolution.calcCost();
+				if (newSolution.getCost() < solution.getCost())
+					neighborhood.add(newSolution);
+			}
+		return neighborhood;
+	}
+	
+	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
+		switch (k) {
+		case 0: return getNeighborhood_2opt(solution);
+		case 1: return getNeighborhood_swap(solution);
+		case 2: return getNeighborhood_insert(solution);
+		}
 		return null;
 	}
 	
-	public ArrayList<Solution> getNeighborhood(Solution solution) {
-		return getNeighborhood_2opt(solution);
-	}
-	
-	public Solution VND(Solution x, int kmax) {
-		int k = 1;
-		ArrayList<Solution> neighborhood = new ArrayList<>();
-		ArrayList<Solution> newNeighborhood = new ArrayList<>();
-		neighborhood.add(x);
+	public Solution VND(Solution x) {
+		int k = 0;
+		ArrayList<Solution> neighborhood;
 		
 		do {
-			// Next neighborhood
-			newNeighborhood.clear();
-			for (int i=0; i<neighborhood.size(); i++)
-				newNeighborhood.addAll(getNeighborhood(neighborhood.get(i)));
-			neighborhood = newNeighborhood;
-			if (neighborhood.isEmpty()) return x;
-			
 			// Find best neighbor
+			neighborhood = getNeighborhood(x, k);
+			if (neighborhood.isEmpty()) {
+				k++;
+				continue;
+			}
 			Solution x1 = neighborhood.get(0);
 			for (int i=1; i<neighborhood.size(); i++)
 				if (neighborhood.get(i).getCost() < x1.getCost())
@@ -82,7 +104,7 @@ public class VNS {
 			// Change neighborhood
 			if (x1.getCost() < x.getCost()) {
 				x = x1;
-				k = 1;
+				k = 0;
 			} else k++;
 			
 		} while (k < kmax);
@@ -91,23 +113,23 @@ public class VNS {
 	}
 	
 	public Solution shake(Solution x, int k) {
-		ArrayList<Solution> neighborhood = getNeighborhood(x);
+		ArrayList<Solution> neighborhood = getNeighborhood(x, k);
 		if (neighborhood.isEmpty()) return x;
 		return neighborhood.get(r.nextInt(neighborhood.size()));
 	}
 	
-	public Solution GVNS(Solution x, int lmax, int kmax, int tmax) {
+	public Solution GVNS(Solution x, int tmax) {
 		int t = 0, k;
 		
 		do {
-			k = 1;
+			k = 0;
 			do {
 				Solution x1 = shake(x, k);
-				Solution x2 = VND(x1, lmax);
+				Solution x2 = VND(x1);
 				// Change neighborhood
 				if (x2.getCost() < x.getCost()) {
 					x = x2;
-					k = 1;
+					k = 0;
 				} else k++;
 				t++;
 			} while (k < kmax);
@@ -127,7 +149,7 @@ public class VNS {
 		for (int i=0; i<20; i++) {
 			System.out.println("GVNS " + i +":");
 			Solution x = new Solution(solve.getGraph());
-			solve.GVNS(x, 2, 5, 20).print();
+			solve.GVNS(x, 20).print();
 		}
 	}
 }

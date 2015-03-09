@@ -11,7 +11,7 @@ public class VNS {
 	
 	private Graph graph;
 	private Random r;
-	private int kmax = 3;
+	private int kmax = 5;
 	
 	public VNS(String filename) {
 		graph = new Graph(filename);
@@ -63,6 +63,24 @@ public class VNS {
 		return neighborhood;
 	}
 	
+	public ArrayList<Solution> getNeighborhood_pairinsert(Solution solution) {
+		ArrayList<Solution> neighborhood = new ArrayList<>();
+		for (int i=0; i<graph.getCities()-3; i++)
+			for (int j=i+2; j<graph.getCities()-1; j++) {
+				Solution newSolution = new Solution(solution);
+				int temp1 = newSolution.getList()[j];
+				int temp2 = newSolution.getList()[j+1];
+				for (int k=j; k>i+1; k--)
+					newSolution.getList()[k] = newSolution.getList()[k-2];
+				newSolution.getList()[i+1] = temp1;
+				newSolution.getList()[i+2] = temp2;
+				newSolution.calcCost();
+				if (newSolution.getCost() < solution.getCost())
+					neighborhood.add(newSolution);
+			} 
+		return neighborhood;
+	}
+	
 	public ArrayList<Solution> getNeighborhood_swap(Solution solution) {
 		ArrayList<Solution> neighborhood = new ArrayList<>();
 		for (int i=0; i<graph.getCities()-1; i++)
@@ -76,11 +94,27 @@ public class VNS {
 		return neighborhood;
 	}
 	
+	public ArrayList<Solution> getNeighborhood_pairswap(Solution solution) {
+		ArrayList<Solution> neighborhood = new ArrayList<>();
+		for (int i=0; i<graph.getCities()-3; i++)
+			for (int j=i+2; j<graph.getCities()-1; j++) {
+				Solution newSolution = new Solution(solution);
+				newSolution.swap(i, j);
+				newSolution.swap(i+1, j+1);
+				newSolution.calcCost();
+				if (newSolution.getCost() < solution.getCost())
+					neighborhood.add(newSolution);
+			}
+		return neighborhood;
+	}
+	
 	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
 		switch (k) {
 		case 0: return getNeighborhood_2opt(solution);
 		case 1: return getNeighborhood_swap(solution);
 		case 2: return getNeighborhood_insert(solution);
+		case 4: return getNeighborhood_pairswap(solution);
+		case 5: return getNeighborhood_pairinsert(solution);
 		}
 		return null;
 	}

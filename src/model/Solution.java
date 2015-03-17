@@ -59,7 +59,7 @@ public class Solution {
 		System.out.println(cost);
 	}
 	
-	public int getCity(int city) {
+	public int findCity(int city) {
 		for (int i=0; i<list.length; i++)
 			if (list[i] == city)
 				return i;

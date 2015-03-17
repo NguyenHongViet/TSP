@@ -1,21 +1,18 @@
 package algorithm;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import model.Graph;
 import model.Neighborhood;
 import model.Solution;
 
-public class VNS {
+public class VND {
 	
 	private Graph graph;
-	private Random r;
 	private Neighborhood[] neighborhoods;
 	
-	public VNS(String filename) {
+	public VND(String filename) {
 		graph = new Graph(filename);
-		r = new Random();
 	}
 
 	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
@@ -50,30 +47,32 @@ public class VNS {
 		return neighborhood;
 	}
 	
-	public Solution shake(Solution x, int k) {
-		ArrayList<Solution> neighborhood = getNeighborhood(x, k);
-		if (neighborhood.isEmpty()) return x;
-		return neighborhood.get(r.nextInt(neighborhood.size()));
-	}
-	
-	public Solution algorithm(Solution x, int kmax, int tmax) {
-		int t = 0, k;
+	public Solution algorithm(Solution x, int kmax) {
+		int k = 0;
 		neighborhoods = new Neighborhood[kmax];
 		for (int i=0; i<kmax; i++)
-			neighborhoods[i]= new Neighborhood();
+			neighborhoods[i] = new Neighborhood();
+		ArrayList<Solution> neighborhood;
 		
 		do {
-			k = 0;
-			do {
-				Solution x1 = shake(x, k);
-				// Change neighborhood
-				if (x1.getCost() < x.getCost()) {
-					x = x1;
-					k = 0;
-				} else k++;
-				t++;
-			} while (k < kmax);
-		} while (t <= tmax);
+			// Find best neighbor
+			neighborhood = getNeighborhood(x, k);
+			if (neighborhood.isEmpty()) {
+				k++;
+				continue;
+			}
+			Solution x1 = neighborhood.get(0);
+			for (int i=1; i<neighborhood.size(); i++)
+				if (neighborhood.get(i).getCost() < x1.getCost())
+					x1 = neighborhood.get(i);
+			
+			// Change neighborhood
+			if (x1.getCost() < x.getCost()) {
+				x = x1;
+				k = 0;
+			} else k++;
+			
+		} while (k < kmax);
 		
 		return x;
 	}
@@ -83,13 +82,13 @@ public class VNS {
 	}
 	
 	public static void main(String[] args) {
-		VNS solve = new VNS("eil51.tsp");
+		VND solve = new VND("eil51.tsp");
 		solve.getGraph().print();
 		
 		for (int i=0; i<20; i++) {
-			System.out.println("GVNS " + i +":");
+			System.out.println("VND " + i +":");
 			Solution x = new Solution(solve.getGraph());
-			solve.algorithm(x, 10, 20).print();
+			solve.algorithm(x, 2).print();
 		}
 	}
 }

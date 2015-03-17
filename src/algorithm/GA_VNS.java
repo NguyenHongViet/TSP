@@ -1,18 +1,12 @@
 package algorithm;
 
-import model.Solution;
 
 public class GA_VNS extends GA {
 	
-	VNS vns;
+	GVNS gvns;
 	
 	public GA_VNS(String filename) {
 		super(filename);
-		vns = new VNS(filename);
-	}
-	
-	public Solution mutate(Solution solution) {
-		return vns.GVNS(solution, 20);
 	}
 	
 	public static void main(String[] args) {

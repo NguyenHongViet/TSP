@@ -58,9 +58,7 @@ public class VNS {
 	
 	public Solution algorithm(Solution x, int kmax, int tmax) {
 		int t = 0, k;
-		neighborhoods = new Neighborhood[kmax];
-		for (int i=0; i<kmax; i++)
-			neighborhoods[i]= new Neighborhood();
+		initNeighborhoohs(kmax);
 		
 		do {
 			k = 0;
@@ -76,6 +74,12 @@ public class VNS {
 		} while (t <= tmax);
 		
 		return x;
+	}
+	
+	public void initNeighborhoohs(int kmax) {
+		neighborhoods = new Neighborhood[kmax];
+		for (int i=0; i<kmax; i++)
+			neighborhoods[i]= new Neighborhood();
 	}
 	
 	public Graph getGraph() {

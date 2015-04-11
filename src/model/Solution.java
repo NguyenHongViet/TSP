@@ -33,6 +33,12 @@ public class Solution {
 		list[b] = t;
 	}
 	
+	public double distance(int a, int b) {
+		City ca = graph.getCity(list[a]);
+		City cb = graph.getCity(list[b]);
+		return City.distance(ca, cb);
+	}
+	
 	public void calcCost() {
 		cost = 0;
 		for (int i=0; i<list.length-1; i++)

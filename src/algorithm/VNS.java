@@ -22,27 +22,45 @@ public class VNS {
 		ArrayList<Solution> neighborhood = new ArrayList<>();
 		
 		if (k == 0) {
-			for (int b = 1; b < graph.getCities()-2; b++)
+			for (int a = 0; a < graph.getCities()-3; a++) {
+				int b = a + 1;
+				double ab = solution.distance(a, b);
 				for (int c = b + 1; c < graph.getCities()-1; c++) {
-					int start = b;
-					int end = c;
-					Solution newSolution = new Solution(solution);
-					while (start < end) newSolution.swap(start++, end--);
-					newSolution.calcCost();
-					neighborhood.add(newSolution);
-				}
-		} else {
-			for (int i=0; i<neighborhoods[k-1].size(); i++) {
-				Solution cur = (Solution) neighborhoods[k-1].get(i);
-				for (int b = 1; b < graph.getCities()-2; b++)
-					for (int c = b + 1; c < graph.getCities()-1; c++) {
+					int d = c + 1;
+					double cd = solution.distance(c, d);
+					double ac = solution.distance(a, c);
+					double bd = solution.distance(b, d);
+					if (ab + cd > ac + bd) {
 						int start = b;
 						int end = c;
-						Solution newSolution = new Solution(cur);
+						Solution newSolution = new Solution(solution);
 						while (start < end) newSolution.swap(start++, end--);
 						newSolution.calcCost();
 						neighborhood.add(newSolution);
 					}
+				}
+			}
+		} else {
+			for (int i=0; i<neighborhoods[k-1].size(); i++) {
+				Solution cur = (Solution) neighborhoods[k-1].get(i);
+				for (int a = 0; a < graph.getCities()-3; a++) {
+					int b = a + 1;
+					double ab = cur.distance(a, b);
+					for (int c = b + 1; c < graph.getCities()-1; c++) {
+						int d = c + 1;
+						double cd = cur.distance(c, d);
+						double ac = cur.distance(a, c);
+						double bd = cur.distance(b, d);
+						if (ab + cd > ac + bd) {
+							int start = b;
+							int end = c;
+							Solution newSolution = new Solution(cur);
+							while (start < end) newSolution.swap(start++, end--);
+							newSolution.calcCost();
+							neighborhood.add(newSolution);
+						}
+					}
+				}
 			}
 		}
 		

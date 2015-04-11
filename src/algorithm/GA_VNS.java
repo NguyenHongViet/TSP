@@ -1,42 +1,35 @@
 package algorithm;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import model.Solution;
 
 
 public class GA_VNS extends GA {
 	
-	VNS vns;
+	GVNS gvns;
+	Random r;
 	
 	public GA_VNS(String filename) {
 		super(filename);
-		vns = new VNS(filename);
+		gvns = new GVNS(filename);
+		r = new Random();
 	}
 	
 	@Override
 	public ArrayList<Solution> selection(ArrayList<Solution> population) {
-		Solution[] elite = new Solution[10];
-		elite[0] = population.get(0);
-		for (int i=1; i<elite.length; i++)
-			elite[i] = null;
-		
-		for (int i=1; i<population.size(); i++) {
-			double cost = population.get(i).getCost();
-			for (int j=0; (j < elite.length) || (elite[j] == null); j++) {
-				if (cost < elite[j].getCost()) {
-					for (int k=elite.length-1; k>j; k--)
-						elite[k] = elite[k-1];
-					elite[j] = population.get(i);
-					break;
-				}
-			}
-		}
-		
-		for (int i=0; i<elite.length; i++)
-			population.add(vns.algorithm(elite[i], 3, 5));
-		
+		ArrayList<Solution> chosen = choose(population);
+		for (int i=0; i<chosen.size(); i++)
+			population.add(gvns.algorithm(chosen.get(i), 5, 5, 5));
 		return super.selection(population);
+	}
+	
+	public ArrayList<Solution> choose(ArrayList<Solution> population) {
+		ArrayList<Solution> chosen = new ArrayList<>();
+		for (int i=0; i<10; i++)
+			chosen.add(population.get(r.nextInt(population.size())));
+		return chosen;
 	}
 	
 	public static void main(String[] args) {

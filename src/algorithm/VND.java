@@ -12,7 +12,7 @@ public class VND extends VNS {
 	
 	public Solution algorithm(Solution x, int kmax) {
 		int k = 0;
-		initNeighborhoohs(kmax);
+		initNeighborhoods(kmax);
 		ArrayList<Solution> neighborhood;
 		
 		do {

@@ -76,7 +76,7 @@ public class VNS {
 	
 	public Solution algorithm(Solution x, int kmax, int tmax) {
 		int t = 0, k;
-		initNeighborhoohs(kmax);
+		initNeighborhoods(kmax);
 		
 		do {
 			k = 0;
@@ -87,14 +87,14 @@ public class VNS {
 					x = x1;
 					k = 0;
 				} else k++;
-				t++;
 			} while (k < kmax);
+			t++;
 		} while (t <= tmax);
 		
 		return x;
 	}
 	
-	public void initNeighborhoohs(int kmax) {
+	public void initNeighborhoods(int kmax) {
 		neighborhoods = new Neighborhood[kmax];
 		for (int i=0; i<kmax; i++)
 			neighborhoods[i]= new Neighborhood();

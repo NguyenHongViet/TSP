@@ -28,8 +28,7 @@ public class GA {
 	public void algorithm() {
 		population = initialization(graph);
 		for (int i=0; i<MAX_GENERATION; i++) {
-			population = selection(population);
-			
+			// Choose parents
 			ArrayList<Solution> parent1 = new ArrayList<>();
 			ArrayList<Solution> parent2 = new ArrayList<>();
 			int PARENT_POP = (int) (MAX_POPULATION * CROSSOVER_PERCENTAGE / 2);
@@ -59,6 +58,8 @@ public class GA {
 					} else population.add(children[1]);
 				}
 			}
+			
+			population = selection(population);
 		}
 	}
 	

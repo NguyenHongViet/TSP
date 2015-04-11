@@ -13,7 +13,7 @@ public class GVNS extends VNS {
 
 	public Solution algorithm(Solution x, int lmax, int kmax, int tmax) {
 		int t = 0, k;
-		initNeighborhoohs(kmax);
+		initNeighborhoods(kmax);
 		
 		do {
 			k = 0;
@@ -25,8 +25,8 @@ public class GVNS extends VNS {
 					x = x2;
 					k = 0;
 				} else k++;
-				t++;
 			} while (k < kmax);
+			t++;
 		} while (t <= tmax);
 		
 		return x;

@@ -13,7 +13,7 @@ public class GA {
 	private ArrayList<Solution> population;
 	
 	public static final int MAX_POPULATION = 100;
-	public static final int MAX_GENERATION = 500;
+	public static final int MAX_CALC = 50000;
 	public static final double CROSSOVER_PERCENTAGE = 0.9;
 	public double MUTATE_PERCENTAGE;
 	private Random r;
@@ -27,7 +27,8 @@ public class GA {
 	
 	public void algorithm() {
 		population = initialization(graph);
-		for (int i=0; i<MAX_GENERATION; i++) {
+		Solution.countCalc = 0;
+		while (Solution.countCalc < MAX_CALC) {
 			// Choose parents
 			ArrayList<Solution> parent1 = new ArrayList<>();
 			ArrayList<Solution> parent2 = new ArrayList<>();
@@ -144,8 +145,8 @@ public class GA {
 			return children;
 		case 1: return crossover_cx(parent1, parent2);
 		case 2: 
-			int a = r.nextInt(parent1.getList().length - 6);
-			int b = a + 1 + r.nextInt(5);
+			int a = r.nextInt(parent1.getList().length - 1);
+			int b = a + 1 + r.nextInt(parent1.getList().length - a - 1);
 			children = new Solution[2];
 			children[0] = crossover_ox(parent1, parent2, a, b);
 			children[1] = crossover_ox(parent2, parent1, a, b);
@@ -208,8 +209,8 @@ public class GA {
 		Solution[] children = new Solution[2];
 		children[0] = new Solution(parent1);
 		children[1] = new Solution(parent2);
-		int a = r.nextInt(parent1.getList().length - 6);
-		int b = a + 1 + r.nextInt(5);
+		int a = r.nextInt(parent1.getList().length - 1);
+		int b = a + 1 + r.nextInt(parent1.getList().length - a - 1);
 		int pos;
 		
 		for (int i=a; i<b; i++) {

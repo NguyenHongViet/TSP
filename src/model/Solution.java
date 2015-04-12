@@ -7,6 +7,7 @@ public class Solution {
 	private int[] list;
 	private Graph graph;
 	private double cost;
+	public static int countCalc;
 	
 	public Solution(Graph graph) {
 		this.graph = graph;
@@ -44,6 +45,7 @@ public class Solution {
 		for (int i=0; i<list.length-1; i++)
 			cost += City.distance(graph.getCity(list[i]), graph.getCity(list[i+1]));
 		cost += City.distance(graph.getCity(list[list.length-1]), graph.getCity(list[0]));
+		Solution.countCalc++;
 	}
 	
 	public double getCost() {

@@ -29,7 +29,9 @@ public class GA {
 		population = initialization(graph);
 		Solution.countCalc = 0;
 		while (Solution.countCalc < MAX_CALC) {
+			System.out.println("Next generation");
 			// Choose parents
+			System.out.println("\tChoose parents");
 			ArrayList<Solution> parent1 = new ArrayList<>();
 			ArrayList<Solution> parent2 = new ArrayList<>();
 			int PARENT_POP = (int) (MAX_POPULATION * CROSSOVER_PERCENTAGE / 2);
@@ -41,6 +43,7 @@ public class GA {
 				parent2.add(population.get(choose));
 			}
 			
+			System.out.println("\tCrossover - Mutate");
 			for (int j=0; j<PARENT_POP; j++) {
 				Solution[] children = crossover(parent1.get(j), parent2.get(j));
 				
@@ -60,6 +63,7 @@ public class GA {
 				}
 			}
 			
+			System.out.println("\tSelection");
 			population = selection(population);
 		}
 	}

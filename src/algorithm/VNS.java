@@ -22,8 +22,8 @@ public class VNS {
 	}
 	
 	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
-		return getNeighborhood_2opt(solution, k);
-//		return getNeighborhood_subMST(solution, k);
+//		return getNeighborhood_2opt(solution, k);
+		return getNeighborhood_subMST(solution, k);
 	}
 
 	public ArrayList<Solution> getNeighborhood_2opt(Solution solution, int k) {
@@ -159,17 +159,17 @@ public class VNS {
 	
 	public ArrayList<Solution> getNeighborhood_subMST(Solution solution, int k) {
 		ArrayList<Solution> neighborhood = new ArrayList<>();
+		int length = 10;
 		
 		if (k == 0) {
-			for (int a = 0; a < graph.getCities()-10; a++) {
-				int b = a + 10;
-				City[] input = new City[b-a+1];
-				for (int i=0; i<input.length; i++)
+			for (int a = 0; a < graph.getCities()-length; a++) {
+				City[] input = new City[length];
+				for (int i=0; i<length; i++)
 					input[i] = graph.getCity(solution.getList()[a+i]);
-				ArrayList<TreeNode> MST = buildPrimTree(input);
-				ArrayList<City> order = preorder(MST, input[0]);
+				ArrayList<TreeNode> tree = buildPrimTree(input);
+				ArrayList<City> order = preorder(tree, input[0]);
 				Solution newSolution = new Solution(solution);
-				for (int i=0; i<order.size(); i++)
+				for (int i=0; i<length; i++)
 					newSolution.getList()[a+i] = graph.findCity(order.get(i));
 				newSolution.calcCost();
 				neighborhood.add(newSolution);
@@ -178,14 +178,13 @@ public class VNS {
 			for (int j=0; j<neighborhoods[k-1].size(); j++) {
 				Solution cur = neighborhoods[k-1].get(j);
 				for (int a = 0; a < graph.getCities()-10; a++) {
-					int b = a + 10;
-					City[] input = new City[b-a+1];
-					for (int i=0; i<input.length; i++)
+					City[] input = new City[length];
+					for (int i=0; i<length; i++)
 						input[i] = graph.getCity(cur.getList()[a+i]);
-					ArrayList<TreeNode> MST = buildPrimTree(input);
-					ArrayList<City> order = preorder(MST, input[0]);
+					ArrayList<TreeNode> tree = buildPrimTree(input);
+					ArrayList<City> order = preorder(tree, input[0]);
 					Solution newSolution = new Solution(cur);
-					for (int i=0; i<order.size(); i++)
+					for (int i=0; i<length; i++)
 						newSolution.getList()[a+i] = graph.findCity(order.get(i));
 					newSolution.calcCost();
 					neighborhood.add(newSolution);
@@ -204,15 +203,12 @@ public class VNS {
 		for (int i=0; i<20; i++) {
 			System.out.println("VNS " + i +":");
 			Solution x = new Solution(solve.getGraph());
-			solve.algorithm(x, 10, 20).print();
+			solve.algorithm(x, 3, 20).print();
 		}
-		
-		solve.graph = new Graph(10);
-		System.out.println("Graph");
-		solve.graph.print();
+				
 		City[] input = new City[10];
 		for (int i=0; i<10; i++)
-			input[i] = solve.graph.getList().get(i);
+			input[i] = solve.graph.getList().get(i+solve.graph.getCities()-10);
 		 ArrayList<TreeNode> tree = solve.buildPrimTree(input);
 		 System.out.println("MST");
 		 for (int i=0; i<tree.size(); i++)

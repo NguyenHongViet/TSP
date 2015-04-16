@@ -22,60 +22,48 @@ public class VNS {
 	}
 	
 	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
-//		return getNeighborhood_2opt(solution, k);
-		return getNeighborhood_subMST(solution, k);
-	}
-
-	public ArrayList<Solution> getNeighborhood_2opt(Solution solution, int k) {
 		ArrayList<Solution> neighborhood = new ArrayList<>();
-		
 		if (k == 0) {
-			for (int a = 0; a < graph.getCities()-3; a++) {
-				int b = a + 1;
-				double ab = solution.distance(a, b);
-				for (int c = b + 1; c < graph.getCities()-1; c++) {
-					int d = c + 1;
-					double cd = solution.distance(c, d);
-					double ac = solution.distance(a, c);
-					double bd = solution.distance(b, d);
-					if (ab + cd > ac + bd) {
-						int start = b;
-						int end = c;
-						Solution newSolution = new Solution(solution);
-						while (start < end) newSolution.swap(start++, end--);
-						newSolution.calcCost();
-						neighborhood.add(newSolution);
-					}
-				}
-			}
+//			neighborhood = getNeighbors_2opt(solution);
+			neighborhood = getNeighbors_subMST(solution);
+			neighborhoods[k].set(neighborhood);
 		} else {
 			for (int i=0; i<neighborhoods[k-1].size(); i++) {
 				Solution cur = neighborhoods[k-1].get(i);
-				for (int a = 0; a < graph.getCities()-3; a++) {
-					int b = a + 1;
-					double ab = cur.distance(a, b);
-					for (int c = b + 1; c < graph.getCities()-1; c++) {
-						int d = c + 1;
-						double cd = cur.distance(c, d);
-						double ac = cur.distance(a, c);
-						double bd = cur.distance(b, d);
-						if (ab + cd > ac + bd) {
-							int start = b;
-							int end = c;
-							Solution newSolution = new Solution(cur);
-							while (start < end) newSolution.swap(start++, end--);
-							newSolution.calcCost();
-							neighborhood.add(newSolution);
-						}
-					}
+//				neighborhood.addAll(getNeighbors_2opt(cur));
+				neighborhood.addAll(getNeighbors_subMST(cur));
+				neighborhoods[k].set(neighborhood);
+			}
+		}
+		
+		return neighborhood;
+	}
+	
+	public ArrayList<Solution> getNeighbors_2opt(Solution solution) {
+		ArrayList<Solution> neighbors = new ArrayList<>();
+		
+		for (int a = 0; a < graph.getCities()-3; a++) {
+			int b = a + 1;
+			double ab = solution.distance(a, b);
+			for (int c = b + 1; c < graph.getCities()-1; c++) {
+				int d = c + 1;
+				double cd = solution.distance(c, d);
+				double ac = solution.distance(a, c);
+				double bd = solution.distance(b, d);
+				if (ab + cd > ac + bd) {
+					int start = b;
+					int end = c;
+					Solution newSolution = new Solution(solution);
+					while (start < end) newSolution.swap(start++, end--);
+					newSolution.calcCost();
+					neighbors.add(newSolution);
 				}
 			}
 		}
 		
-		neighborhoods[k].set(neighborhood);
-		return neighborhood;
+		return neighbors;
 	}
-	
+
 	public Solution shake(Solution x, int k) {
 		ArrayList<Solution> neighborhood = getNeighborhood(x, k);
 		if (neighborhood.isEmpty()) return x;
@@ -94,6 +82,7 @@ public class VNS {
 				if (x1.getCost() < x.getCost()) {
 					x = x1;
 					k = 0;
+					x.print();
 				} else k++;
 			} while (k < kmax);
 			t++;
@@ -157,43 +146,55 @@ public class VNS {
 		return order;
 	}
 	
-	public ArrayList<Solution> getNeighborhood_subMST(Solution solution, int k) {
-		ArrayList<Solution> neighborhood = new ArrayList<>();
+	public ArrayList<Solution> getNeighbors_subMST(Solution solution) {
+		ArrayList<Solution> neighbors = new ArrayList<>();
 		int length = 10;
 		
-		if (k == 0) {
-			for (int a = 0; a < graph.getCities()-length; a++) {
-				City[] input = new City[length];
-				for (int i=0; i<length; i++)
-					input[i] = graph.getCity(solution.getList()[a+i]);
-				ArrayList<TreeNode> tree = buildPrimTree(input);
-				ArrayList<City> order = preorder(tree, input[0]);
+		for (int a = 0; a < graph.getCities()-length; a++) {
+			City[] input = new City[length];
+			for (int i=0; i<length; i++)
+				input[i] = graph.getCity(solution.getList()[a+i]);
+			
+			City before_start, after_end;
+			if (a == 0)
+				before_start = graph.getCity(solution.getList()[graph.getCities()-1]);
+			else before_start = graph.getCity(solution.getList()[a-1]);
+			if (a == graph.getCities()-1)
+				after_end = graph.getCity(solution.getList()[0]);
+			else after_end = graph.getCity(solution.getList()[(a+length) % graph.getCities()]);
+			
+			int start_order = 0;
+			for (int i=1; i<length; i++)
+				if (City.distance(before_start, input[i]) < City.distance(before_start, input[start_order]))
+					start_order = i;
+			if (start_order != 0) {
+				City temp = input[0];
+				input[0] = input[start_order];
+				input[start_order] = temp;
+			}
+			ArrayList<TreeNode> tree = buildPrimTree(input);
+			ArrayList<City> order = preorder(tree, input[0]);
+			
+			double before, after;
+			before = City.distance(before_start, input[0]);
+			after = City.distance(before_start, order.get(0));
+			for (int i=0; i<length-1; i++) {
+				before += City.distance(input[i], input[i+1]);
+				after += City.distance(order.get(i), order.get(i+1));
+			}
+			before += City.distance(input[length-1], after_end);
+			after += City.distance(order.get(length-1), after_end);
+			
+			if (before > after) {
 				Solution newSolution = new Solution(solution);
 				for (int i=0; i<length; i++)
 					newSolution.getList()[a+i] = graph.findCity(order.get(i));
 				newSolution.calcCost();
-				neighborhood.add(newSolution);
-			}
-		} else {
-			for (int j=0; j<neighborhoods[k-1].size(); j++) {
-				Solution cur = neighborhoods[k-1].get(j);
-				for (int a = 0; a < graph.getCities()-10; a++) {
-					City[] input = new City[length];
-					for (int i=0; i<length; i++)
-						input[i] = graph.getCity(cur.getList()[a+i]);
-					ArrayList<TreeNode> tree = buildPrimTree(input);
-					ArrayList<City> order = preorder(tree, input[0]);
-					Solution newSolution = new Solution(cur);
-					for (int i=0; i<length; i++)
-						newSolution.getList()[a+i] = graph.findCity(order.get(i));
-					newSolution.calcCost();
-					neighborhood.add(newSolution);
-				}
+				neighbors.add(newSolution);
 			}
 		}
-		
-		neighborhoods[k].set(neighborhood);
-		return neighborhood;
+
+		return neighbors;
 	}
 	
 	public static void main(String[] args) {
@@ -203,19 +204,19 @@ public class VNS {
 		for (int i=0; i<20; i++) {
 			System.out.println("VNS " + i +":");
 			Solution x = new Solution(solve.getGraph());
-			solve.algorithm(x, 3, 20).print();
+			solve.algorithm(x, 5, 20).print();
 		}
 				
-		City[] input = new City[10];
-		for (int i=0; i<10; i++)
-			input[i] = solve.graph.getList().get(i+solve.graph.getCities()-10);
-		 ArrayList<TreeNode> tree = solve.buildPrimTree(input);
-		 System.out.println("MST");
-		 for (int i=0; i<tree.size(); i++)
-			 System.out.println(solve.graph.findCity(tree.get(i).head) + " " + solve.graph.findCity(tree.get(i).tail));
-		 ArrayList<City> order = solve.preorder(tree, input[0]);
-		 System.out.println("Preorder");
-		 for (int i=0; i<order.size(); i++)
-			 System.out.println(solve.graph.findCity(order.get(i)));
+//		City[] input = new City[10];
+//		for (int i=0; i<10; i++)
+//			input[i] = solve.graph.getList().get(i+solve.graph.getCities()-10);
+//		 ArrayList<TreeNode> tree = solve.buildPrimTree(input);
+//		 System.out.println("MST");
+//		 for (int i=0; i<tree.size(); i++)
+//			 System.out.println(solve.graph.findCity(tree.get(i).head) + " " + solve.graph.findCity(tree.get(i).tail));
+//		 ArrayList<City> order = solve.preorder(tree, input[0]);
+//		 System.out.println("Preorder");
+//		 for (int i=0; i<order.size(); i++)
+//			 System.out.println(solve.graph.findCity(order.get(i)));
 	}
 }

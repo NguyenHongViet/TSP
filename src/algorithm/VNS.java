@@ -24,14 +24,14 @@ public class VNS {
 	public ArrayList<Solution> getNeighborhood(Solution solution, int k) {
 		ArrayList<Solution> neighborhood = new ArrayList<>();
 		if (k == 0) {
-//			neighborhood = getNeighbors_2opt(solution);
-			neighborhood = getNeighbors_subMST(solution);
+			neighborhood = getNeighbors_2opt(solution);
+//			neighborhood = getNeighbors_subMST(solution);
 			neighborhoods[k].set(neighborhood);
 		} else {
 			for (int i=0; i<neighborhoods[k-1].size(); i++) {
 				Solution cur = neighborhoods[k-1].get(i);
-//				neighborhood.addAll(getNeighbors_2opt(cur));
-				neighborhood.addAll(getNeighbors_subMST(cur));
+				neighborhood.addAll(getNeighbors_2opt(cur));
+//				neighborhood.addAll(getNeighbors_subMST(cur));
 				neighborhoods[k].set(neighborhood);
 			}
 		}
@@ -55,7 +55,7 @@ public class VNS {
 					int end = c;
 					Solution newSolution = new Solution(solution);
 					while (start < end) newSolution.swap(start++, end--);
-					newSolution.calcCost();
+					newSolution.setCost(solution.getCost() - ab - cd + ac + bd);
 					neighbors.add(newSolution);
 				}
 			}
@@ -213,14 +213,12 @@ public class VNS {
 	}
 	
 	public static void main(String[] args) {
-		VNS solve = new VNS("eil51.tsp");
+		VNS solve = new VNS("data/eil51.tsp");
 		solve.getGraph().print();
 		
-		for (int i=0; i<20; i++) {
-			System.out.println("VNS " + i +":");
-			Solution x = new Solution(solve.getGraph());
-			solve.algorithm(x, 5, 20).print();
-		}
+		System.out.println("VNS :");
+		Solution x = new Solution(solve.getGraph());
+		solve.algorithm(x, 5, 20).print();
 				
 //		City[] input = new City[10];
 //		for (int i=0; i<10; i++)

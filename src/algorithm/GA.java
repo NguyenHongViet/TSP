@@ -29,9 +29,7 @@ public class GA {
 		population = initialization(graph);
 		Solution.countCalc = 0;
 		while (Solution.countCalc < MAX_CALC) {
-			System.out.println("Next generation");
 			// Choose parents
-			System.out.println("\tChoose parents");
 			ArrayList<Solution> parent1 = new ArrayList<>();
 			ArrayList<Solution> parent2 = new ArrayList<>();
 			int PARENT_POP = (int) (MAX_POPULATION * CROSSOVER_PERCENTAGE / 2);
@@ -43,7 +41,6 @@ public class GA {
 				parent2.add(population.get(choose));
 			}
 			
-			System.out.println("\tCrossover - Mutate");
 			for (int j=0; j<PARENT_POP; j++) {
 				Solution[] children = crossover(parent1.get(j), parent2.get(j));
 				
@@ -63,7 +60,6 @@ public class GA {
 				}
 			}
 			
-			System.out.println("\tSelection");
 			population = selection(population);
 		}
 	}
@@ -292,6 +288,7 @@ public class GA {
 
 	public ArrayList<Solution> selection(ArrayList<Solution> population) {
 		ArrayList<Solution> newPop = new ArrayList<>();
+		double delta = 1.0;
 		
 		for (int i=0; i<MAX_POPULATION; i++) {
 			int choose = 0;
@@ -301,7 +298,7 @@ public class GA {
 			
 			boolean exist = false;
 			for (int j=0; j<newPop.size(); j++)
-				if (newPop.get(j) == population.get(choose)) {
+				if (Math.abs(newPop.get(j).getCost() - population.get(choose).getCost()) < delta) {
 					exist = true;
 					break;
 				}
@@ -348,7 +345,7 @@ public class GA {
 	}
 	
 	public static void main(String[] args) {
-		GA solve = new GA("eil51.tsp");
+		GA solve = new GA("data/eil51.tsp");
 		solve.getGraph().print();
 		solve.algorithm();
 		for (int i=0; i<solve.getPopulation().size(); i++) {

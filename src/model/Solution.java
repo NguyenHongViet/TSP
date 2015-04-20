@@ -48,6 +48,10 @@ public class Solution {
 		Solution.countCalc++;
 	}
 	
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+	
 	public double getCost() {
 		return cost;
 	}
@@ -65,6 +69,14 @@ public class Solution {
 			System.out.print(list[i] + " ");
 		System.out.println();
 		System.out.println(cost);
+	}
+	
+	@Override
+	public String toString() {
+		String string = "";
+		for (int i=0; i<list.length; i++)
+			string += list[i] + " ";
+		return string;
 	}
 	
 	public int findCity(int city) {

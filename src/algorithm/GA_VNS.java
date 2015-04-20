@@ -33,7 +33,7 @@ public class GA_VNS extends GA {
 	}
 	
 	public static void main(String[] args) {
-		GA_VNS solve = new GA_VNS("eil51.tsp");
+		GA_VNS solve = new GA_VNS("data/eil51.tsp");
 		solve.getGraph().print();
 		solve.algorithm();
 		for (int i=0; i<solve.getPopulation().size(); i++) {

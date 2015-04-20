@@ -197,6 +197,21 @@ public class VNS {
 		return neighbors;
 	}
 	
+	public ArrayList<Solution> getNeighbors_MTC(Solution solution) {
+		ArrayList<Solution> neighbors = new ArrayList<>();
+		
+		for (int head = 0; head < graph.getCities()-1; head++) {
+			int tail = head + 1;
+			int in  = (head == 0) ? (graph.getCities()-1) : (head-1);
+			int out = (tail == graph.getCities()-1) ? (0) : (tail+1);
+			double cin  = solution.distance(in, head);
+			double cout = solution.distance(tail, out);
+			
+		}
+		
+		return neighbors;
+	}
+	
 	public static void main(String[] args) {
 		VNS solve = new VNS("eil51.tsp");
 		solve.getGraph().print();
